@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Simulation</title>
+</head>
+<body>
+    <h2>ATM Simulation</h2>
+    <form>
+        <label>Account Number:</label>
+        <input type="text" id="account" name="account">
+        
+        <label>PIN:</label>
+        <input type="password" id="pin" name="pin">
+        
+        <label>Transaction:</label>
+        <select id="transaction" name="transaction">
+            <option value="deposit">Deposit</option>
+            <option value="withdrawal">Withdrawal</option>
+            <option value="balance">Balance Inquiry</option>
+        </select>
+        
+        <label>Amount:</label>
+        <input type="text" id="amount" name="amount" placeholder="Enter amount (for deposit/withdrawal)">
+        
+        <input type="button" value="Submit" onclick="submitTransaction()">
+        
+        <h3 id="result"></h3>
+    </form>
+
+    <script>
+        let accountBal = 0;   // keep record of current balance 
+        let withdrawalCount = 0;  // keep record of how many withdrawls user made today
+        let totalWithdrawnToday = 0; //keep record of total amount user withdrawls
+
+        function submitTransaction() {
+            const account = document.getElementById("account").value;
+            const pin = document.getElementById("pin").value;
+            const transaction = document.getElementById("transaction").value;
+            const amount = parseInt(document.getElementById("amount").value);
+
+            // Check if account number is entered
+            if (!account) {
+                alert("Please enter account number.");
+                return;
+            }
+
+            // Check PIN
+            if (pin !== "1234") {
+                alert("Invalid PIN.");
+                return;
+            }
+
+            // Handle different transactions
+            if (transaction === "balance") {
+                alert(`Your current balance is: ₹${accountBal}`);
+                return;
+            }
+
+            // Check if amount is entered for deposit/withdrawal
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            if (transaction === "deposit") {
+                // Check if deposit amount is multiple of 100
+                if (amount % 100 !== 0) {
+                    alert("Deposit amount must be in multiples of ₹100.");
+                    return;
+                }
+                
+                accountBal += amount;
+                alert(`You have successfully deposited ₹${amount}. Your new balance is: ₹${accountBal}`);
+                
+            } else if (transaction === "withdrawal") {
+                // Check if withdrawal amount is multiple of 100
+                if (amount % 100 !== 0) {
+                    alert("Withdrawal amount must be in multiples of ₹100.");
+                    return;
+                }
+
+                // Check withdrawal limit (maximum 2 withdrawals)
+                if (withdrawalCount >= 2) {
+                    alert("Today's withdrawal limit has been exceeded. You can only make 2 withdrawals per day.");
+                    return;
+                }
+
+                // Check daily withdrawal amount limit (₹800)
+                if (totalWithdrawnToday + amount > 800) {
+                    alert(`Cannot withdraw ₹${amount}. Daily withdrawal limit is ₹800. You have already withdrawn ₹${totalWithdrawnToday} today.`);
+                    return;
+                }
+
+                // Process withdrawal (allow overdraft)
+                accountBal -= amount;
+                withdrawalCount++;
+                totalWithdrawnToday += amount;
+
+                // Show result — including negative balance if overdraft occurred
+                if (accountBal < 0) {
+                    alert(`Overdraft! Your balance is now: ₹${accountBal}`);
+                } else {
+                    alert(`You have successfully withdrawn ₹${amount}. Your remaining balance is: ₹${accountBal}`);
+                }
+            }
+
+            document.getElementById("amount").value = "";
+        }
+    </script>
+</body>
+</html>
