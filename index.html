@@ -70,11 +70,18 @@
                     alert("Deposit amount must be in multiples of ₹100.");
                     return;
                 }
+                 // Check if deposit amount is not more than 100
+                if (amount + accountBal> 2000) {
+                    alert("Deposit amount cannot be more than ₹2000.");
+                    return;
+                }
                 
                 accountBal += amount;
                 alert(`You have successfully deposited ₹${amount}. Your new balance is: ₹${accountBal}`);
                 
-            } else if (transaction === "withdrawal") {
+                
+            }
+             else if (transaction === "withdrawal") {
                 // Check if withdrawal amount is multiple of 100
                 if (amount % 100 !== 0) {
                     alert("Withdrawal amount must be in multiples of ₹100.");
@@ -93,8 +100,7 @@
                     return;
                 }
 
-                // Process withdrawal (allow overdraft)
-                accountBal -= amount;
+                accountBal -= amount;  // Process withdrawal (allow overdraft)
                 withdrawalCount++;
                 totalWithdrawnToday += amount;
 
